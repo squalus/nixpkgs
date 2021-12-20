@@ -25455,6 +25455,9 @@ with pkgs;
     desktopName = "Firefox DevEdition";
   };
 
+  librewolf-unwrapped = firefoxPackages.librewolf;
+  librewolf = callPackage ../applications/networking/browsers/firefox/librewolf/wrapper.nix { };
+
   flac = callPackage ../applications/audio/flac { };
 
   redoflacs = callPackage ../applications/audio/redoflacs { };

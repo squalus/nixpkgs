@@ -1,0 +1,15 @@
+{
+  "packageVersion": "95.0.2-1",
+  "common": {
+    "rev": "v95.0.2-1",
+    "sha256": "0dhwwq2mxqvshy05gy35bipiqycahgd7zzrsji07mn1cf940hmph"
+  },
+  "settings": {
+    "rev": "4.0",
+    "sha256": "08iw7v32h9p8zylq9zcs3f5rq45s0s1rh4wz506lsry5951df2w5"
+  },
+  "firefox": {
+    "version": "95.0.2",
+    "sha512": "1b9eb91d72a6975b4d2558a7c5de0e008095398b9862498623656ab6d8056e3cffc12263f58aa07feeddc91ccfb512aa4b582dfeadb142d548d96c3d50204196"
+  }
+}
