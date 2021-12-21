@@ -64,7 +64,7 @@ rec {
     binaryName = "librewolf";
     version = librewolf-src.packageVersion;
     src = librewolf-src.firefox;
-    inherit (librewolf-src) extraConfigureFlags extraMakeFlags patches extraPostPatch;
+    inherit (librewolf-src) extraConfigureFlags extraMakeFlags patches extraPostPatch extraPassthru;
 
     meta = {
       description = "A fork of Firefox, focused on privacy, security and freedom";
@@ -74,9 +74,6 @@ rec {
     };
     updateScript = callPackage ./librewolf/update.nix {
       attrPath = "librewolf-unwrapped";
-    };
-    extraPassthru = {
-      inherit librewolf-src;
     };
   }).override {
     crashreporterSupport = false;

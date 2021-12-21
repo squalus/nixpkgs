@@ -50,6 +50,18 @@ in rec {
     cp ${common}/source_files/search-config.json services/settings/dumps/main/search-config.json
   '';
 
+  extraPrefsFiles = [
+    "${settings}/librewolf.cfg"
+  ];
+
+  extraPoliciesFiles = [
+    "${settings}/distribution/policies.json"
+  ];
+
+  extraPassthru = {
+    inherit extraPrefsFiles extraPoliciesFiles;
+  };
+
   patches = map (name: "${common}/patches/${name}") patchNames;
 }
 

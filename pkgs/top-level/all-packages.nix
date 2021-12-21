@@ -25456,7 +25456,10 @@ with pkgs;
   };
 
   librewolf-unwrapped = firefoxPackages.librewolf;
-  librewolf = callPackage ../applications/networking/browsers/firefox/librewolf/wrapper.nix { };
+  librewolf = wrapFirefox librewolf-unwrapped {
+    inherit (librewolf-unwrapped) extraPrefsFiles extraPoliciesFiles;
+    libName = "librewolf";
+  };
 
   flac = callPackage ../applications/audio/flac { };
 
