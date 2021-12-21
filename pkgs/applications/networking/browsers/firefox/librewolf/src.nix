@@ -4,7 +4,7 @@ in {
   inherit (src) packageVersion;
   common = fetchFromGitLab {
     owner = "librewolf-community";
-    repo = "common";
+    repo = "browser/common";
     inherit (src.common) rev sha256;
   };
   settings = fetchFromGitLab {
