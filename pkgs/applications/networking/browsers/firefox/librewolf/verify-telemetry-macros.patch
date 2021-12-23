@@ -1,0 +1,33 @@
+diff --git a/accessible/aom/AccessibleNode.cpp b/accessible/aom/AccessibleNode.cpp
+index 2ecc58b567..2c4d4fce1a 100644
+--- a/accessible/aom/AccessibleNode.cpp
++++ b/accessible/aom/AccessibleNode.cpp
+@@ -24,6 +24,28 @@ using namespace mozilla::a11y;
+ using namespace mozilla::dom;
+ 
+ bool AccessibleNode::IsAOMEnabled(JSContext* aCx, JSObject* /*unused*/) {
++
++  // As an extra safety measure, fail the build if telemetry-related macros are still defined
++  #ifdef MOZ_CRASHREPORTER
++  static_assert(false);
++  #endif
++
++  #ifdef MOZ_TELEMETRY_REPORTING
++  static_assert(false);
++  #endif
++
++  #ifdef MOZ_SERVICES_HEALTHREPORT
++  static_assert(false);
++  #endif
++
++  #ifdef MOZ_DATA_REPORTING
++  static_assert(false);
++  #endif
++
++  #ifdef MOZ_NORMANDY
++  static_assert(false);
++  #endif
++
+   return nsContentUtils::IsSystemCaller(aCx) ||
+          StaticPrefs::accessibility_AOM_enabled();
+ }

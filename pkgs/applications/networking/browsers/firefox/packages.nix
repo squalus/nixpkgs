@@ -64,7 +64,7 @@ rec {
     binaryName = "librewolf";
     version = librewolf-src.packageVersion;
     src = librewolf-src.firefox;
-    inherit (librewolf-src) extraConfigureFlags extraMakeFlags patches extraPostPatch extraPassthru;
+    inherit (librewolf-src) extraConfigureFlags patches extraPostPatch extraPassthru;
 
     meta = {
       description = "A fork of Firefox, focused on privacy, security and freedom";

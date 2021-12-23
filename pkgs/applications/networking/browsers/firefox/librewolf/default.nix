@@ -38,30 +38,20 @@ in rec {
     "--allow-addon-sideload"
   ];
 
-  extraMakeFlags = [
-    "MOZ_CRASHREPORTER=0"
-    "MOZ_DATA_REPORTING=0"
-    "MOZ_SERVICES_HEALTHREPORT=0"
-    "MOZ_TELEMETRY_REPORTING=0"
-  ];
-
   extraPostPatch = ''
     cp -r ${common}/source_files/browser .
     cp ${common}/source_files/search-config.json services/settings/dumps/main/search-config.json
+    sed -i '/MOZ_SERVICES_HEALTHREPORT/ s/True/False/' browser/moz.configure
+    sed -i '/MOZ_NORMANDY/ s/True/False/' browser/moz.configure
   '';
 
-  extraPrefsFiles = [
-    "${settings}/librewolf.cfg"
-  ];
+  extraPrefsFiles = [ "${settings}/librewolf.cfg" ];
 
-  extraPoliciesFiles = [
-    "${settings}/distribution/policies.json"
-  ];
+  extraPoliciesFiles = [ "${settings}/distribution/policies.json" ];
 
-  extraPassthru = {
-    inherit extraPrefsFiles extraPoliciesFiles;
-  };
+  extraPassthru = { inherit extraPrefsFiles extraPoliciesFiles; };
 
-  patches = map (name: "${common}/patches/${name}") patchNames;
+  patches = (map (name: "${common}/patches/${name}") patchNames)
+    ++ [ ./verify-telemetry-macros.patch ];
 }
 
