@@ -108,6 +108,7 @@ let
       "-DUSE_CRYPTODEV_DIGESTS"
     ] ++ lib.optional enableSSL2 "enable-ssl2"
       ++ lib.optional enableSSL3 "enable-ssl3"
+      ++ lib.optional (versionAtLeast version "3.0.0") "enable-ktls"
       ++ lib.optional (versionAtLeast version "1.1.0" && stdenv.hostPlatform.isAarch64) "no-afalgeng"
       # OpenSSL needs a specific `no-shared` configure flag.
       # See https://wiki.openssl.org/index.php/Compilation_and_Installation#Configure_Options
@@ -192,15 +193,15 @@ in {
   };
 
   openssl_1_1 = common {
-    version = "1.1.1l";
-    sha256 = "sha256-C3o+XlnDSCf+DDp0t+yLrvMCuY+oAIjX+RU6oW+na9E=";
+    version = "1.1.1m";
+    sha256 = "sha256-+JGZvosjykX8fLnx2NPuZzEjGChq0DD1MWrKZGLbbJY=";
     patches = [
       ./1.1/nix-ssl-cert-file.patch
 
       (if stdenv.hostPlatform.isDarwin
        then ./use-etc-ssl-certs-darwin.patch
        else ./use-etc-ssl-certs.patch)
-    ] ++ lib.optionals (stdenv.isDarwin) [
+    ] ++ lib.optionals (stdenv.isDarwin && (builtins.substring 5 5 version) < "m") [
       ./1.1/macos-yosemite-compat.patch
     ];
     withDocs = true;

@@ -14,11 +14,21 @@ buildPythonPackage rec {
     sha256 = "1mqspsn6bf3ibvih1zna2glkg8iw7vy5zg9gzg0d1m8zcndk2c48";
   };
 
-  checkInputs = [ pytestCheckHook pytest-benchmark enum34 numpy arrow ruamel-yaml ];
+  checkInputs = [ pytestCheckHook enum34 numpy ];
 
-  disabledTests = lib.optionals stdenv.isDarwin [ "test_multiprocessing" ];
+  # these have dependencies that are broken on Python 2
+  disabledTestPaths = [
+    "tests/gallery/test_gallery.py"
+    "tests/test_benchmarks.py"
+    "tests/test_compiler.py"
+  ];
 
-  pytestFlagsArray = [ "--benchmark-disable" ];
+  disabledTests = [
+    "test_benchmarks"
+    "test_timestamp"
+  ] ++ lib.optionals stdenv.isDarwin [
+    "test_multiprocessing"
+  ];
 
   meta = with lib; {
     description = "Powerful declarative parser (and builder) for binary data";

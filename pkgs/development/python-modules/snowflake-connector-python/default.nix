@@ -24,12 +24,12 @@
 
 buildPythonPackage rec {
   pname = "snowflake-connector-python";
-  version = "2.7.0";
+  version = "2.7.2";
   disabled = pythonOlder "3.6";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "cf8624539b18f5752756b3029622c08e9113f6a861a9f4689133d483a0ffd73b";
+    sha256 = "b2f8f360750eefa98be09ff53c130381646f8dfc8c6e4a705387676210ff8578";
   };
 
   propagatedBuildInputs = [

@@ -5,8 +5,8 @@ let
   description = "PrusaSlicer fork with more features and faster development cycle";
 
   versions = {
-    stable = { version = "2.3.57.7"; sha256 = "sha256-qYvHNGuA2YDatrY/K2g5PE2gD53VXNptCaa7TpWGV7g="; };
-    latest = { version = "2.3.57.7"; sha256 = "sha256-qYvHNGuA2YDatrY/K2g5PE2gD53VXNptCaa7TpWGV7g="; };
+    stable = { version = "2.3.57.9"; sha256 = "sha256-JWZ6PdzKwxdyp7StYuW69XGbTPoxaIJ2R4Ynmc65hvE="; };
+    latest = { version = "2.3.57.9"; sha256 = "sha256-JWZ6PdzKwxdyp7StYuW69XGbTPoxaIJ2R4Ynmc65hvE="; };
   };
 
   override = { version, sha256 }: super: {
@@ -19,6 +19,8 @@ let
       rev = version;
       fetchSubmodules = true;
     };
+
+    patches = null;
 
     # We don't need PS overrides anymore, and gcode-viewer is embedded in the binary.
     postInstall = null;

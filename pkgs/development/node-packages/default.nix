@@ -314,7 +314,7 @@ let
 
       src = fetchurl {
         url = "https://registry.npmjs.org/prisma/-/prisma-${version}.tgz";
-        sha512 = "sha512-6SqgHS/5Rq6HtHjsWsTxlj+ySamGyCLBUQfotc2lStOjPv52IQuDVpp58GieNqc9VnfuFyHUvTZw7aQB+G2fvQ==";
+        sha512 = "sha512-pzgc95msPLcCHqOli7Hnabu/GRfSGSUWl5s2P6N13T/rgMB+NNeKbxCmzQiZT2yLOeLEPivV6YrW1oeQIwJxcg==";
       };
       postInstall = with pkgs; ''
         wrapProgram "$out/bin/prisma" \
@@ -440,6 +440,7 @@ let
       buildInputs = [ self.node-pre-gyp ];
       postInstall = ''
         echo /var/lib/thelounge > $out/lib/node_modules/thelounge/.thelounge_home
+        patch -d $out/lib/node_modules/thelounge -p1 < ${./thelounge-packages-path.patch}
       '';
     };
 

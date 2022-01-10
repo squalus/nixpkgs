@@ -24,14 +24,14 @@
 
 buildPythonApplication rec {
   pname = "trytond";
-  version = "6.2.0";
+  version = "6.2.2";
   format = "setuptools";
 
   disabled = pythonOlder "3.6";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "sha256-U73dzLTUJnOw24/ELQzjnxJ0PvjV+zE/PNuQHXbEukw=";
+    sha256 = "9494016dd8b4da5a06dccdd1afbd918248d42da9f2c19b1eb8958052c747e193";
   };
 
   # Tells the tests which database to use

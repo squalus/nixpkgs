@@ -108,6 +108,8 @@
   ./misc/lib.nix
   ./misc/label.nix
   ./misc/locate.nix
+  ./misc/man-db.nix
+  ./misc/mandoc.nix
   ./misc/meta.nix
   ./misc/nixpkgs.nix
   ./misc/passthru.nix
@@ -296,7 +298,6 @@
   ./services/cluster/hadoop/default.nix
   ./services/cluster/k3s/default.nix
   ./services/cluster/kubernetes/addons/dns.nix
-  ./services/cluster/kubernetes/addons/dashboard.nix
   ./services/cluster/kubernetes/addon-manager.nix
   ./services/cluster/kubernetes/apiserver.nix
   ./services/cluster/kubernetes/controller-manager.nix
@@ -363,6 +364,7 @@
   ./services/desktops/malcontent.nix
   ./services/desktops/pipewire/pipewire.nix
   ./services/desktops/pipewire/pipewire-media-session.nix
+  ./services/desktops/pipewire/wireplumber.nix
   ./services/desktops/gnome/at-spi2-core.nix
   ./services/desktops/gnome/chrome-gnome-shell.nix
   ./services/desktops/gnome/evolution-data-server.nix
@@ -395,6 +397,7 @@
   ./services/editors/emacs.nix
   ./services/editors/infinoted.nix
   ./services/finance/odoo.nix
+  ./services/games/asf.nix
   ./services/games/crossfire-server.nix
   ./services/games/deliantra-server.nix
   ./services/games/factorio.nix
@@ -510,7 +513,6 @@
   ./services/misc/cpuminer-cryptonight.nix
   ./services/misc/cgminer.nix
   ./services/misc/confd.nix
-  ./services/misc/couchpotato.nix
   ./services/misc/dendrite.nix
   ./services/misc/devmon.nix
   ./services/misc/dictd.nix
@@ -555,6 +557,7 @@
   ./services/misc/mame.nix
   ./services/misc/matrix-appservice-discord.nix
   ./services/misc/matrix-appservice-irc.nix
+  ./services/misc/matrix-conduit.nix
   ./services/misc/matrix-synapse.nix
   ./services/misc/mautrix-facebook.nix
   ./services/misc/mautrix-telegram.nix
@@ -562,7 +565,6 @@
   ./services/misc/mediatomb.nix
   ./services/misc/metabase.nix
   ./services/misc/moonraker.nix
-  ./services/misc/mwlib.nix
   ./services/misc/mx-puppet-discord.nix
   ./services/misc/n8n.nix
   ./services/misc/nitter.nix
@@ -738,7 +740,6 @@
   ./services/networking/eternal-terminal.nix
   ./services/networking/fakeroute.nix
   ./services/networking/ferm.nix
-  ./services/networking/firefox/sync-server.nix
   ./services/networking/fireqos.nix
   ./services/networking/firewall.nix
   ./services/networking/flannel.nix
@@ -797,6 +798,7 @@
   ./services/networking/miredo.nix
   ./services/networking/mstpd.nix
   ./services/networking/mtprotoproxy.nix
+  ./services/networking/mtr-exporter.nix
   ./services/networking/mullvad-vpn.nix
   ./services/networking/multipath.nix
   ./services/networking/murmur.nix
@@ -1028,13 +1030,11 @@
   ./services/web-apps/pgpkeyserver-lite.nix
   ./services/web-apps/powerdns-admin.nix
   ./services/web-apps/matomo.nix
-  ./services/web-apps/moinmoin.nix
   ./services/web-apps/openwebrx.nix
   ./services/web-apps/restya-board.nix
   ./services/web-apps/sogo.nix
   ./services/web-apps/rss-bridge.nix
   ./services/web-apps/tt-rss.nix
-  ./services/web-apps/trac.nix
   ./services/web-apps/trilium.nix
   ./services/web-apps/selfoss.nix
   ./services/web-apps/shiori.nix
@@ -1187,6 +1187,7 @@
   ./virtualisation/oci-containers.nix
   ./virtualisation/cri-o.nix
   ./virtualisation/docker.nix
+  ./virtualisation/docker-rootless.nix
   ./virtualisation/ecs-agent.nix
   ./virtualisation/libvirtd.nix
   ./virtualisation/lxc.nix

@@ -118,9 +118,6 @@ let
         '';
       };
 
-      azure-appconfiguration = overrideAzureMgmtPackage super.azure-appconfiguration "1.1.1" "zip"
-        "sha256-uDzSy2PZMiXehOJ6u/wFkhL43id2b0xY3Tq7g53/C+Q=";
-
       azure-batch = overrideAzureMgmtPackage super.azure-batch "11.0.0" "zip"
         "83d7a2b0be42ca456ac2b56fa3dc6ce704c130e888d37d924072c1d3718f32da";
 
@@ -149,7 +146,7 @@ let
         "sha256-p9MTfVxGD1CsLUQGHWCnC08nedTKhEt3QZtXJeZeCb4=";
 
       azure-mgmt-recoveryservicesbackup = overrideAzureMgmtPackage super.azure-mgmt-recoveryservicesbackup "3.0.0" "zip"
-        "sha256-y5akbJdqXZsRi+mecq1opR1Ye9yTxNblGp/zjiXEqaY=";
+        "sha256-GZJIayjd1tT1l/0wBCF80sr09NyKDOcSJrWudnrOOhg=";
 
       azure-mgmt-resource = overrideAzureMgmtPackage super.azure-mgmt-resource "19.0.0" "zip"
         "bbb60bb9419633c2339569d4e097908638c7944e782b5aef0f5d9535085a9100";
@@ -161,7 +158,7 @@ let
         "73054bd19866577e7e327518afc8f47e1639a11aea29a7466354b81804f4a676";
 
       azure-mgmt-compute = overrideAzureMgmtPackage super.azure-mgmt-compute "23.1.0" "zip"
-        "sha256-N+zUTEnOyn18lDHlkUj+vRXX/sJhZR7XLd1YdV50ULA=";
+        "sha256-Sduw9RAG1VfL0LIpmcuezz6rwr5G2W78xtZRxrM3VLM=";
 
       azure-mgmt-consumption = overrideAzureMgmtPackage super.azure-mgmt-consumption "2.0.0" "zip"
         "12ai4qps73ivawh0yzvgb148ksx02r30pqlvfihx497j62gsi1cs";
@@ -309,6 +306,17 @@ let
 
       azure-multiapi-storage = overrideAzureMgmtPackage super.azure-multiapi-storage "0.7.0" "tar.gz"
         "cd4f184be8c9ca8aca969f93ed50dc7fe556d28ca11520440fc182cf876abdf9";
+
+      azure-appconfiguration = super.azure-appconfiguration.overrideAttrs(oldAttrs: rec {
+        version = "1.1.1";
+
+        src = super.fetchPypi {
+          inherit (oldAttrs) pname;
+          inherit version;
+          sha256 = "sha256-uDzSy2PZMiXehOJ6u/wFkhL43id2b0xY3Tq7g53/C+Q=";
+          extension = "zip";
+        };
+      });
 
       azure-graphrbac = super.azure-graphrbac.overrideAttrs(oldAttrs: rec {
         version = "0.60.0";

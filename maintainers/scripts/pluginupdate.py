@@ -305,7 +305,7 @@ class CleanEnvironment(object):
 
 def get_current_plugins(editor: Editor) -> List[Plugin]:
     with CleanEnvironment():
-        cmd = ["nix", "eval", "--impure", "--json", "--expr", editor.get_plugins]
+        cmd = ["nix", "eval", "--extra-experimental-features", "nix-command", "--impure", "--json", "--expr", editor.get_plugins]
         log.debug("Running command %s", cmd)
         out = subprocess.check_output(cmd)
     data = json.loads(out)
@@ -401,6 +401,8 @@ def load_plugin_spec(plugin_file: str) -> List[PluginDesc]:
     plugins = []
     with open(plugin_file) as f:
         for line in f:
+            if line.startswith("#"):
+                continue
             plugin = parse_plugin_line(line)
             if not plugin.owner:
                 msg = f"Invalid repository {line}, must be in the format owner/repo[ as alias]"

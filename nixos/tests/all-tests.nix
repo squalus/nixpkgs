@@ -70,6 +70,7 @@ in
   cloud-init = handleTest ./cloud-init.nix {};
   cntr = handleTest ./cntr.nix {};
   cockroachdb = handleTestOn ["x86_64-linux"] ./cockroachdb.nix {};
+  collectd = handleTest ./collectd.nix {};
   consul = handleTest ./consul.nix {};
   containers-bridge = handleTest ./containers-bridge.nix {};
   containers-custom-pkgs.nix = handleTest ./containers-custom-pkgs.nix {};
@@ -104,6 +105,7 @@ in
   dnscrypt-wrapper = handleTestOn ["x86_64-linux"] ./dnscrypt-wrapper {};
   doas = handleTest ./doas.nix {};
   docker = handleTestOn ["x86_64-linux"] ./docker.nix {};
+  docker-rootless = handleTestOn ["x86_64-linux"] ./docker-rootless.nix {};
   docker-edge = handleTestOn ["x86_64-linux"] ./docker-edge.nix {};
   docker-registry = handleTest ./docker-registry.nix {};
   docker-tools = handleTestOn ["x86_64-linux"] ./docker-tools.nix {};
@@ -253,11 +255,14 @@ in
   magnetico = handleTest ./magnetico.nix {};
   mailcatcher = handleTest ./mailcatcher.nix {};
   mailhog = handleTest ./mailhog.nix {};
+  man = handleTest ./man.nix {};
   mariadb-galera-mariabackup = handleTest ./mysql/mariadb-galera-mariabackup.nix {};
   mariadb-galera-rsync = handleTest ./mysql/mariadb-galera-rsync.nix {};
   matomo = handleTest ./matomo.nix {};
   matrix-appservice-irc = handleTest ./matrix-appservice-irc.nix {};
+  matrix-conduit = handleTest ./matrix-conduit.nix {};
   matrix-synapse = handleTest ./matrix-synapse.nix {};
+  mattermost = handleTest ./mattermost.nix {};
   mediawiki = handleTest ./mediawiki.nix {};
   meilisearch = handleTest ./meilisearch.nix {};
   memcached = handleTest ./memcached.nix {};
@@ -270,7 +275,6 @@ in
   misc = handleTest ./misc.nix {};
   mjolnir = handleTest ./matrix/mjolnir.nix {};
   mod_perl = handleTest ./mod_perl.nix {};
-  moinmoin = handleTest ./moinmoin.nix {};
   mongodb = handleTest ./mongodb.nix {};
   moodle = handleTest ./moodle.nix {};
   morty = handleTest ./morty.nix {};
@@ -362,6 +366,7 @@ in
   php = handleTest ./php {};
   php74 = handleTest ./php { php = pkgs.php74; };
   php80 = handleTest ./php { php = pkgs.php80; };
+  php81 = handleTest ./php { php = pkgs.php81; };
   pinnwand = handleTest ./pinnwand.nix {};
   plasma5 = handleTest ./plasma5.nix {};
   plasma5-systemd-start = handleTest ./plasma5-systemd-start.nix {};
@@ -395,6 +400,7 @@ in
   proxy = handleTest ./proxy.nix {};
   prowlarr = handleTest ./prowlarr.nix {};
   pt2-clone = handleTest ./pt2-clone.nix {};
+  pulseaudio = discoverTests (import ./pulseaudio.nix);
   qboot = handleTestOn ["x86_64-linux" "i686-linux"] ./qboot.nix {};
   quorum = handleTest ./quorum.nix {};
   rabbitmq = handleTest ./rabbitmq.nix {};
@@ -433,6 +439,7 @@ in
   solanum = handleTest ./solanum.nix {};
   solr = handleTest ./solr.nix {};
   sonarr = handleTest ./sonarr.nix {};
+  sourcehut = handleTest ./sourcehut.nix {};
   spacecookie = handleTest ./spacecookie.nix {};
   spark = handleTestOn ["x86_64-linux"] ./spark {};
   sslh = handleTest ./sslh.nix {};
@@ -470,7 +477,6 @@ in
   tinc = handleTest ./tinc {};
   tinydns = handleTest ./tinydns.nix {};
   tor = handleTest ./tor.nix {};
-  trac = handleTest ./trac.nix {};
   # traefik test relies on docker-containers
   traefik = handleTestOn ["x86_64-linux"] ./traefik.nix {};
   trafficserver = handleTest ./trafficserver.nix {};

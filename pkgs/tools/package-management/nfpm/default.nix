@@ -2,16 +2,16 @@
 
 buildGoModule rec {
   pname = "nfpm";
-  version = "2.10.0";
+  version = "2.11.3";
 
   src = fetchFromGitHub {
     owner = "goreleaser";
     repo = pname;
     rev = "v${version}";
-    sha256 = "sha256-ZLlTcybBoLfiSWb0DKn+U+S/LbekZvTRyDV6b1q9FDU=";
+    sha256 = "sha256-xwziGGdFBmPpLRlBBficioULISt8WjGBocbrQUXa8CY=";
   };
 
-  vendorSha256 = "sha256-uGpMOKqNgGOtgLU9ztg3GmR4FYBaldgZf6BZWxn08W8=";
+  vendorSha256 = "sha256-RaAb8QDFp/7TolsNZqcXurozr3vvK0SRyyy2h8MPhnk=";
 
   doCheck = false;
 

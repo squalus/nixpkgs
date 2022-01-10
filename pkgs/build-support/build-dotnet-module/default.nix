@@ -46,8 +46,9 @@
 # Tests to disable. This gets passed to `dotnet test --filter "FullyQualifiedName!={}"`, to ensure compatibility with all frameworks.
 # See https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-test#filter-option-details for more details.
 , disabledTests ? []
-# The project file to run unit tests against. This is usually the regular project file, but sometimes it needs to be manually set.
-, testProjectFile ? projectFile
+# The project file to run unit tests against. This is usually referenced in the regular project file, but sometimes it needs to be manually set.
+# It gets restored and build, but not installed. You may need to regenerate your nuget lockfile after setting this.
+, testProjectFile ? ""
 
 # The type of build to perform. This is passed to `dotnet` with the `--configuration` flag. Possible values are `Release`, `Debug`, etc.
 , buildType ? "Release"
@@ -67,9 +68,9 @@ assert nugetDeps == null -> throw "Defining the `nugetDeps` attribute is require
 
 let
   _nugetDeps = linkFarmFromDrvs "${name}-nuget-deps" (import nugetDeps {
-    fetchNuGet = { name, version, sha256 }: fetchurl {
-      name = "nuget-${name}-${version}.nupkg";
-      url = "https://www.nuget.org/api/v2/package/${name}/${version}";
+    fetchNuGet = { pname, version, sha256 }: fetchurl {
+      name = "${pname}-${version}.nupkg";
+      url = "https://www.nuget.org/api/v2/package/${pname}/${version}";
       inherit sha256;
     };
   });
@@ -110,50 +111,55 @@ let
     # Stripping breaks the executable
     dontStrip = true;
 
+    # gappsWrapperArgs gets included when wrapping for dotnet, as to avoid double wrapping
+    dontWrapGApps = true;
+
     DOTNET_NOLOGO = true; # This disables the welcome message.
     DOTNET_CLI_TELEMETRY_OPTOUT = true;
 
-    passthru.fetch-deps = args.passthru.fetch-deps or writeScript "fetch-${args.pname}-deps" ''
-      set -euo pipefail
-      cd "$(dirname "''${BASH_SOURCE[0]}")"
+    passthru = {
+      fetch-deps = writeScript "fetch-${args.pname}-deps" ''
+        set -euo pipefail
+        cd "$(dirname "''${BASH_SOURCE[0]}")"
 
-      export HOME=$(mktemp -d)
-      deps_file="/tmp/${args.pname}-deps.nix"
+        export HOME=$(mktemp -d)
+        deps_file="/tmp/${args.pname}-deps.nix"
 
-      store_src="${package.src}"
-      src="$(mktemp -d /tmp/${args.pname}.XXX)"
-      cp -rT "$store_src" "$src"
-      chmod -R +w "$src"
+        store_src="${package.src}"
+        src="$(mktemp -d /tmp/${args.pname}.XXX)"
+        cp -rT "$store_src" "$src"
+        chmod -R +w "$src"
 
-      trap "rm -rf $src $HOME" EXIT
-      pushd "$src"
+        trap "rm -rf $src $HOME" EXIT
+        pushd "$src"
 
-      export DOTNET_NOLOGO=1
-      export DOTNET_CLI_TELEMETRY_OPTOUT=1
+        export DOTNET_NOLOGO=1
+        export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
-      mkdir -p "$HOME/nuget_pkgs"
+        mkdir -p "$HOME/nuget_pkgs"
 
-      for project in "${lib.concatStringsSep "\" \"" (lib.toList projectFile)}"; do
-        ${dotnet-sdk}/bin/dotnet restore "$project" \
-          ${lib.optionalString (!enableParallelBuilding) "--disable-parallel"} \
-          -p:ContinuousIntegrationBuild=true \
-          -p:Deterministic=true \
-          --packages "$HOME/nuget_pkgs" \
-          "''${dotnetRestoreFlags[@]}" \
-          "''${dotnetFlags[@]}"
-      done
+        for project in "${lib.concatStringsSep "\" \"" ((lib.toList projectFile) ++ lib.optionals (testProjectFile != "") (lib.toList testProjectFile))}"; do
+          ${dotnet-sdk}/bin/dotnet restore "$project" \
+            ${lib.optionalString (!enableParallelBuilding) "--disable-parallel"} \
+            -p:ContinuousIntegrationBuild=true \
+            -p:Deterministic=true \
+            --packages "$HOME/nuget_pkgs" \
+            "''${dotnetRestoreFlags[@]}" \
+            "''${dotnetFlags[@]}"
+        done
 
-      echo "Writing lockfile..."
-      ${nuget-to-nix}/bin/nuget-to-nix "$HOME/nuget_pkgs" > "$deps_file"
-      echo "Succesfully wrote lockfile to: $deps_file"
-    '';
+        echo "Writing lockfile..."
+        ${nuget-to-nix}/bin/nuget-to-nix "$HOME/nuget_pkgs" > "$deps_file"
+        echo "Succesfully wrote lockfile to: $deps_file"
+      '';
+    } // args.passthru or {};
 
     configurePhase = args.configurePhase or ''
       runHook preConfigure
 
       export HOME=$(mktemp -d)
 
-      for project in ''${projectFile[@]}; do
+      for project in ''${projectFile[@]} ''${testProjectFile[@]}; do
         dotnet restore "$project" \
           ${lib.optionalString (!enableParallelBuilding) "--disable-parallel"} \
           -p:ContinuousIntegrationBuild=true \
@@ -169,7 +175,7 @@ let
     buildPhase = args.buildPhase or ''
       runHook preBuild
 
-      for project in ''${projectFile[@]}; do
+      for project in ''${projectFile[@]} ''${testProjectFile[@]}; do
         dotnet build "$project" \
           -maxcpucount:${if enableParallelBuilding then "$NIX_BUILD_CORES" else "1"} \
           -p:BuildInParallel=${if enableParallelBuilding then "true" else "false"} \
