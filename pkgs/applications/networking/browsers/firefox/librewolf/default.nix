@@ -2,24 +2,11 @@
 let
   src = callPackage ./src.nix { };
   prefPane = callPackage ./pref-pane.nix { };
-  readLinesToList = file:
-    builtins.filter (s: builtins.isString s && builtins.stringLength s > 0)
-    (builtins.split "\n" (builtins.readFile file));
 in rec {
 
   inherit (src) packageVersion firefox source settings;
 
-  skippedPatches = [
-    "patches/xmas.patch" # adds the config customizations to the build. we do this in the wrapper instead
-  ];
-
-  upstreamPatchNames = readLinesToList "${source}/assets/patches.txt";
-
-  patchNames = builtins.filter (name: !(builtins.elem name skippedPatches))
-    upstreamPatchNames;
-
-  patches = (map (name: "${source}/${name}") patchNames)
-    ++ [ prefPane ./verify-telemetry-macros.patch ];
+  patches = [ prefPane ./verify-telemetry-macros.patch ];
 
   extraConfigureFlags = [
     "--with-app-name=librewolf"
@@ -31,6 +18,15 @@ in rec {
   ];
 
   extraPostPatch = ''
+    while read patch_name; do
+      if [ "$patch_name" == "patches/xmas.patch" ]; then
+        # adds the config customizations to the build. we do this in the wrapper instead
+        continue
+      fi
+      echo "applying LibreWolf patch: $patch_name"
+      patch -p1 < ${source}/$patch_name
+    done <${source}/assets/patches.txt
+
     cp -r ${source}/themes/browser .
     cp ${source}/assets/search-config.json services/settings/dumps/main/search-config.json
     sed -i '/MOZ_SERVICES_HEALTHREPORT/ s/True/False/' browser/moz.configure
@@ -42,7 +38,7 @@ in rec {
   extraPoliciesFiles = [ "${settings}/distribution/policies.json" ];
 
   extraPassthru = {
-    librewolf = { inherit src patches patchNames prefPane; };
+    librewolf = { inherit src patches prefPane; };
     inherit extraPrefsFiles extraPoliciesFiles patches;
   };
 }
