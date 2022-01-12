@@ -2,10 +2,10 @@
 let src = builtins.fromJSON (builtins.readFile ./src.json);
 in {
   inherit (src) packageVersion;
-  common = fetchFromGitLab {
+  source = fetchFromGitLab {
     owner = "librewolf-community";
-    repo = "browser/common";
-    inherit (src.common) rev sha256;
+    repo = "browser/source";
+    inherit (src.source) rev sha256;
   };
   settings = fetchFromGitLab {
     owner = "librewolf-community";
