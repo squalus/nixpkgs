@@ -1011,6 +1011,8 @@ with pkgs;
 
   godspeed = callPackage ../tools/networking/godspeed { };
 
+  fwbuilder = libsForQt5.callPackage ../tools/security/fwbuilder { };
+
   ksnip = libsForQt5.callPackage ../tools/misc/ksnip { };
 
   linux-router = callPackage ../tools/networking/linux-router { };
@@ -2125,6 +2127,8 @@ with pkgs;
   badchars = python3Packages.callPackage ../tools/security/badchars { };
 
   badvpn = callPackage ../tools/networking/badvpn {};
+
+  baget = callPackage ../servers/web-apps/baget { };
 
   barcode = callPackage ../tools/graphics/barcode {};
 
@@ -8697,6 +8701,8 @@ with pkgs;
 
   phodav = callPackage ../tools/networking/phodav { };
 
+  photon-rss = callPackage ../applications/networking/feedreaders/photon { };
+
   pim6sd = callPackage ../servers/pim6sd { };
 
   phosh = callPackage ../applications/window-managers/phosh { };
@@ -9038,6 +9044,8 @@ with pkgs;
 
   qmk = callPackage ../tools/misc/qmk { };
 
+  qodem = callPackage ../tools/networking/qodem { };
+
   qosmic = libsForQt5.callPackage ../applications/graphics/qosmic { };
 
   qownnotes = libsForQt514.callPackage ../applications/office/qownnotes { };
@@ -9107,6 +9115,8 @@ with pkgs;
   rarian = callPackage ../development/libraries/rarian { };
 
   ratools = callPackage ../tools/networking/ratools { };
+
+  ratt = callPackage ../applications/misc/ratt { };
 
   rc = callPackage ../shells/rc { };
 
@@ -14879,6 +14889,8 @@ with pkgs;
 
   jam = callPackage ../development/tools/build-managers/jam { };
 
+  ftjam = callPackage ../development/tools/build-managers/jam/ftjam.nix { };
+
   javacc = callPackage ../development/tools/parsing/javacc {
     jdk = jdk8;
   };
@@ -16602,10 +16614,10 @@ with pkgs;
   glew110 = callPackage ../development/libraries/glew/1.10.nix {
     inherit (darwin.apple_sdk.frameworks) AGL OpenGL;
   };
-  glew-egl = glew.overrideAttrs (oldAttrs: {
-    pname = "glew-egl";
-    makeFlags = oldAttrs.makeFlags ++ [ "SYSTEM=linux-egl" ];
-  });
+  glew-egl = callPackage ../development/libraries/glew {
+    inherit (darwin.apple_sdk.frameworks) OpenGL;
+    enableEGL = true;
+  };
 
   glfw = glfw3;
   glfw-wayland = glfw.override {
@@ -19970,7 +19982,7 @@ with pkgs;
 
   subdl = callPackage ../applications/video/subdl { };
 
-  subtitleeditor = callPackage ../applications/video/subtitleeditor { enchant = enchant1; };
+  subtitleeditor = callPackage ../applications/video/subtitleeditor { };
 
   suil = callPackage ../development/libraries/audio/suil { };
 
@@ -26486,19 +26498,6 @@ with pkgs;
 
   jwm-settings-manager = callPackage ../applications/window-managers/jwm/jwm-settings-manager.nix { };
 
-  k3d = callPackage ../applications/graphics/k3d {
-    inherit (gnome2) gtkglext;
-    stdenv = gcc6Stdenv;
-    boost = boost155.override {
-      enablePython = true;
-      python = python2;
-      stdenv = gcc6Stdenv;
-      buildPackages = buildPackages // {
-        stdenv = gcc6Stdenv;
-      };
-    };
-  };
-
   k3s = callPackage ../applications/networking/cluster/k3s {};
 
   kconf = callPackage ../applications/networking/cluster/kconf { };
@@ -30150,6 +30149,10 @@ with pkgs;
 
   sumokoin = callPackage ../applications/blockchains/sumokoin { boost = boost165; };
 
+  solana-testnet = callPackage ../applications/blockchains/solana {
+    inherit (darwin.apple_sdk.frameworks) IOKit Security AppKit;
+  };
+
   tessera = callPackage ../applications/blockchains/tessera { };
 
   vertcoin  = libsForQt514.callPackage ../applications/blockchains/vertcoin {
@@ -30174,8 +30177,6 @@ with pkgs;
   lightwalletd = callPackage ../applications/blockchains/lightwalletd { };
 
   openethereum = callPackage ../applications/blockchains/openethereum { };
-
-  parity-ui = callPackage ../applications/blockchains/parity-ui { };
 
   polkadot = callPackage ../applications/blockchains/polkadot { };
 
@@ -30231,6 +30232,8 @@ with pkgs;
   augustus = callPackage ../games/augustus { };
 
   ballerburg = callPackage ../games/ballerburg { } ;
+
+  blockattack = callPackage ../games/blockattack { } ;
 
   colobot = callPackage ../games/colobot {};
 
@@ -31149,6 +31152,8 @@ with pkgs;
   taisei = callPackage ../games/taisei { };
 
   tcl2048 = callPackage ../games/tcl2048 { };
+
+  the-legend-of-edgar = callPackage ../games/the-legend-of-edgar { };
 
   the-powder-toy = callPackage ../games/the-powder-toy {
     lua = lua5_1;
