@@ -77,9 +77,24 @@
       </listitem>
       <listitem>
         <para>
+          <link xlink:href="https://frrouting.org/">FRRouting</link>, a
+          popular suite of Internet routing protocol daemons (BGP, BFD,
+          OSPF, IS-IS, VVRP and others). Available as
+          <link linkend="opt-services.ffr.babel.enable">services.frr</link>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
           <link xlink:href="https://github.com/hifi/heisenbridge">heisenbridge</link>,
           a bouncer-style Matrix IRC bridge. Available as
           <link xlink:href="options.html#opt-services.heisenbridge.enable">services.heisenbridge</link>.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link xlink:href="https://ergo.chat">ergochat</link>, a modern
+          IRC with IRCv3 features. Available as
+          <link xlink:href="options.html#opt-services.ergochat.enable">services.ergochat</link>.
         </para>
       </listitem>
       <listitem>
@@ -135,6 +150,29 @@
           <link linkend="opt-services.baget.enable">services.baget</link>.
         </para>
       </listitem>
+      <listitem>
+        <para>
+          <link xlink:href="https://github.com/ThomasLeister/prosody-filer">prosody-filer</link>,
+          a server for handling XMPP HTTP Upload requests. Available at
+          <link linkend="opt-services.prosody-filer.enable">services.prosody-filer</link>.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link xlink:href="https://timetagger.app">timetagger</link>,
+          an open source time-tracker with an intuitive user experience
+          and powerful reporting.
+          <link xlink:href="options.html#opt-services.timetagger.enable">services.timetagger</link>.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link xlink:href="https://www.rstudio.com/products/rstudio/#rstudio-server">rstudio-server</link>,
+          a browser-based version of the RStudio IDE for the R
+          programming language. Available as
+          <link xlink:href="options.html#opt-services.rstudio-server.enable">services.rstudio-server</link>.
+        </para>
+      </listitem>
     </itemizedlist>
   </section>
   <section xml:id="sec-release-22.05-incompatibilities">
@@ -180,6 +218,13 @@
       </listitem>
       <listitem>
         <para>
+          The <literal>mailpile</literal> email webclient
+          (<literal>services.mailpile</literal>) has been removed due to
+          its reliance on python2.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
           The MoinMoin wiki engine
           (<literal>services.moinmoin</literal>) has been removed,
           because Python 2 is being retired from nixpkgs.
@@ -220,6 +265,14 @@
           <literal>/etc/docker/daemon.json</literal>, you need to
           incorporate the changes into the new option
           <literal>virtualisation.docker.daemon.settings</literal>.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          The backward compatibility in
+          <literal>services.dokuwiki</literal> to configure sites with
+          the old interface has been removed. Please use
+          <literal>services.dokuwiki.sites</literal> instead.
         </para>
       </listitem>
       <listitem>
@@ -290,6 +343,28 @@
           follow with upstream changes.
         </para>
       </listitem>
+      <listitem>
+        <para>
+          <literal>pkgs.docbookrx</literal> was removed since it’s
+          unmaintained
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          MultiMC has been replaced with the fork PolyMC due to upstream
+          developers being hostile to 3rd party package maintainers.
+          PolyMC removes all MultiMC branding and is aimed at providing
+          proper 3rd party packages like the one contained in Nixpkgs.
+          This change affects the data folder where game instances and
+          other save and configuration files are stored. Users with
+          existing installations should rename
+          <literal>~/.local/share/multimc</literal> to
+          <literal>~/.local/share/polymc</literal>. The main config
+          file’s path has also moved from
+          <literal>~/.local/share/multimc/multimc.cfg</literal> to
+          <literal>~/.local/share/polymc/polymc.cfg</literal>.
+        </para>
+      </listitem>
     </itemizedlist>
   </section>
   <section xml:id="sec-release-22.05-notable-changes">
@@ -318,6 +393,28 @@
           are only accessible by default to the members of the Unix
           group <literal>redis-${serverName}</literal> through the Unix
           socket <literal>/run/redis-${serverName}/redis.sock</literal>.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          The option
+          <link linkend="opt-virtualisation.vmVariant">virtualisation.vmVariant</link>
+          was added to allow users to make changes to the
+          <literal>nixos-rebuild build-vm</literal> configuration that
+          do not apply to their normal system.
+        </para>
+        <para>
+          The <literal>config.system.build.vm</literal> attribute now
+          always exists and defaults to the value from
+          <literal>vmVariant</literal>. Configurations that import the
+          <literal>virtualisation/qemu-vm.nix</literal> module
+          themselves will override this value, such that
+          <literal>vmVariant</literal> is not used.
+        </para>
+        <para>
+          Similarly
+          <link linkend="opt-virtualisation.vmVariantWithBootLoader">virtualisation.vmVariantWithBootloader</link>
+          was added.
         </para>
       </listitem>
       <listitem>
@@ -409,6 +506,15 @@
         <para>
           The <literal>firmwareLinuxNonfree</literal> package has been
           renamed to <literal>linux-firmware</literal>.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          A new module was added for the
+          <link xlink:href="https://starship.rs/">Starship</link> shell
+          prompt, providing the options
+          <literal>programs.starship.enable</literal> and
+          <literal>programs.starship.settings</literal>.
         </para>
       </listitem>
     </itemizedlist>
