@@ -18,10 +18,6 @@ in rec {
 
   extraPostPatch = ''
     while read patch_name; do
-      if [ "$patch_name" == "patches/xmas.patch" ]; then
-        # adds the config customizations to the build. we do this in the wrapper instead
-        continue
-      fi
       echo "applying LibreWolf patch: $patch_name"
       patch -p1 < ${source}/$patch_name
     done <${source}/assets/patches.txt
