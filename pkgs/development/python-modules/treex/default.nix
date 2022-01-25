@@ -17,19 +17,22 @@
 
 buildPythonPackage rec {
   pname = "treex";
-  version = "0.6.7";
+  version = "0.6.8";
   format = "pyproject";
 
   src = fetchFromGitHub {
     owner = "cgarciae";
     repo = pname;
     rev = version;
-    sha256 = "1hl3wj71c7cp7jzkhyjy7xgs2vc8c89icq0bgfr49y4pwv69n43m";
+    sha256 = "0pi4c78vqhy7mh9ranssdxdjbqnvyagsfkx95k93bnvzgmnr2kxb";
   };
 
-  patches = [
-    ./relax-deps.patch
-  ];
+  postPatch = ''
+    substituteInPlace pyproject.toml \
+      --replace 'rich = "^10.7.0"' 'rich = ">=10.7.0"' \
+      --replace 'PyYAML = "^5.4.1"' 'PyYAML = ">=5.4.1"' \
+      --replace 'optax = "^0.0.9"' 'optax = ">=0.0.9"'
+  '';
 
   nativeBuildInputs = [
     poetry-core

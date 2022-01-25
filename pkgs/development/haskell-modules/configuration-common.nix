@@ -181,6 +181,7 @@ self: super: {
   # base bound
   digit = doJailbreak super.digit;
 
+  # hnix.patch needed until the next release is bumped
   hnix = generateOptparseApplicativeCompletion "hnix"
     (overrideCabal (drv: {
       # 2020-06-05: HACK: does not pass own build suite - `dontCheck`
@@ -1109,14 +1110,16 @@ self: super: {
   # https://github.com/elliottt/hsopenid/issues/15
   openid = markBroken super.openid;
 
-  # The test suite needs the packages's executables in $PATH to succeed.
-  arbtt = overrideCabal (drv: {
+  # Version constraints on test dependency tasty-golden need to be relaxed:
+  # https://github.com/nomeata/arbtt/pull/146
+  arbtt = doJailbreak (overrideCabal (drv: {
+    # The test suite needs the packages's executables in $PATH to succeed.
     preCheck = ''
       for i in $PWD/dist/build/*; do
         export PATH="$i:$PATH"
       done
     '';
-  }) super.arbtt;
+  }) super.arbtt);
 
   # https://github.com/erikd/hjsmin/issues/32
   hjsmin = dontCheck super.hjsmin;
@@ -1185,7 +1188,6 @@ self: super: {
   # The test suite depends on an impure cabal-install installation in
   # $HOME, which we don't have in our build sandbox.
   cabal-install-parsers = dontCheck super.cabal-install-parsers;
-  cabal-install-parsers_0_4_2 = dontCheck super.cabal-install-parsers_0_4_2;
 
   # 2021-08-18: Erroneously  claims that it needs a newer HStringTemplate (>= 0.8.8) than stackage.
   gitit = doJailbreak super.gitit;
@@ -1522,7 +1524,10 @@ self: super: {
   # Upstream issue: https://github.com/haskell-servant/servant-swagger/issues/129
   servant-swagger = dontCheck super.servant-swagger;
 
-  hercules-ci-agent = generateOptparseApplicativeCompletion "hercules-ci-agent" super.hercules-ci-agent;
+  # substituteInPlace: https://github.com/hercules-ci/hercules-ci-agent/issues/363
+  hercules-ci-agent = overrideCabal { preConfigure = ''
+    substituteInPlace hercules-ci-agent/Hercules/Agent/Cachix/Init.hs --replace "Cachix.Client.Env" "Cachix.Client.Version"
+  ''; } (generateOptparseApplicativeCompletion "hercules-ci-agent" super.hercules-ci-agent);
 
   hercules-ci-cli = pkgs.lib.pipe super.hercules-ci-cli [
     unmarkBroken
@@ -1742,6 +1747,8 @@ self: super: {
   # Too strict version bounds on ghc-events
   # https://github.com/haskell/ThreadScope/issues/118
   threadscope = doJailbreak super.threadscope;
+  # https://github.com/mpickering/hs-speedscope/issues/16
+  hs-speedscope = doJailbreak super.hs-speedscope;
 
   # Too strict version bounds on tasty
   # Can likely be removed next week (2021-04-09) when 1.1.1.1 is released.
@@ -1862,29 +1869,22 @@ self: super: {
   # 2021-05-09: Restrictive bound on hspec-golden. Dep removed in newer versions.
   tomland = assert super.tomland.version == "1.3.2.0"; doJailbreak super.tomland;
 
-  # 2021-05-09 haskell-ci pins ShellCheck 0.7.1
-  # https://github.com/haskell-CI/haskell-ci/issues/507
-  # 2021-09-05 haskell-ci needs Cabal 3.4,
-  # cabal-install-parsers uses Cabal 3.6 since 0.4.3
-  haskell-ci = super.haskell-ci.override {
-    ShellCheck = self.ShellCheck_0_7_1;
-    cabal-install-parsers = self.cabal-install-parsers_0_4_2;
-  };
+  # 2022-01-16 haskell-ci needs Cabal 3.6,
+  haskell-ci = super.haskell-ci.overrideScope (self: super: {
+    attoparsec = self.attoparsec_0_14_4;
+    Cabal = self.Cabal_3_6_2_0;
+  });
 
-  # Build haskell-ci from git repository, including some useful fixes,
-  # e. g. required for generating the workflows for the cabal2nix repository
-  haskell-ci-unstable = (overrideSrc rec {
-    version = "0.13.20211116-${builtins.substring 0 7 src.rev}";
+  # Build haskell-ci from git repository
+  haskell-ci-unstable = overrideSrc rec {
+    version = "0.14.1-${builtins.substring 0 7 src.rev}";
     src = pkgs.fetchFromGitHub {
       owner = "haskell-CI";
       repo = "haskell-ci";
-      rev = "b61df11e7f6010ce09920c231321ab1545a990b5";
-      sha256 = "0v6mqpavz5v161milq6a3x9gzap0pgksd3h4rwi2s3f9b15sczcy";
+      rev = "8311a999b8e8be3aa31f65f314def256aa2d5535";
+      sha256 = "169jaqm4xs2almmvqsk567wayxs0g6kn0l5877c03hzr3d9ykrav";
     };
-  } super.haskell-ci).overrideScope (self: super: {
-    attoparsec = self.attoparsec_0_14_3;
-    Cabal = self.Cabal_3_6_2_0;
-  });
+  } self.haskell-ci;
 
   Frames-streamly = super.Frames-streamly.override {
     relude = super.relude_1_0_0_1;
@@ -2104,7 +2104,7 @@ self: super: {
 
   # Needs brick > 0.64
   nix-tree = super.nix-tree.override {
-    brick = self.brick_0_65;
+    brick = self.brick_0_66;
   };
 
   # build newer version for `pkgs.shellcheck`
@@ -2223,6 +2223,16 @@ self: super: {
 
   # Invalid CPP in test suite: https://github.com/cdornan/memory-cd/issues/1
   memory-cd = dontCheck super.memory-cd;
+
+  # raaz-0.3 onwards uses backpack and it does not play nicely with
+  # parallel builds using -j
+  #
+  # See: https://gitlab.haskell.org/ghc/ghc/-/issues/17188
+  #
+  # Overwrite the build cores
+  raaz = overrideCabal (drv: {
+    enableParallelBuilding = false;
+  }) super.raaz;
 
   # https://github.com/andreymulik/sdp/issues/3
   sdp = disableLibraryProfiling super.sdp;

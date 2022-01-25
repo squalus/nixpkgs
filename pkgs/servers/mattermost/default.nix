@@ -10,7 +10,7 @@
 , storePathAsBuildHash ? false }:
 
 let
-  version = "6.2.1";
+  version = "6.3.1";
 
   goPackagePath = "github.com/mattermost/mattermost-server";
 
@@ -22,7 +22,7 @@ let
       owner = "mattermost";
       repo = "mattermost-server";
       rev = "v${version}";
-      sha256 = "WjBsbW7aEI+MX2I1LrEJh8JgNQ4Do7PpeshXgaQAk1s=";
+      sha256 = "cUeGjKutz6Yeq/cP7nYx0zPJ87GKOQWRyNSERzq/nPw=";
     };
 
     ldflags = [
@@ -65,7 +65,7 @@ let
 
     src = fetchurl {
       url = "https://releases.mattermost.com/${version}/mattermost-${version}-linux-amd64.tar.gz";
-      sha256 = "pV/MwMCK8vMzASXuM1+ePcarIgrcNAkFLEdmPya911E=";
+      sha256 = "lFwSZsAcQuuWTN+4wCe7GDLkhp1ASn5GE7/K5Vppr14=";
     };
 
     installPhase = ''
@@ -76,6 +76,9 @@ let
         mattermost/fonts \
         mattermost/templates \
         mattermost/config
+
+      # For some reason a bunch of these files are +x...
+      find $out -type f -exec chmod -x {} \;
     '';
   };
 

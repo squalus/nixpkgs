@@ -34,6 +34,7 @@
 , server ? false # build server version
 , sqlite
 , pam
+, nixosTests
 }:
 
 let
@@ -205,10 +206,14 @@ in
       homepage = "https://www.rstudio.com/";
       license = licenses.agpl3Only;
       maintainers = with maintainers; [ ciil cfhammill ];
+      mainProgram = "rstudio" + optionalString server "-server";
       platforms = platforms.linux;
     };
 
-    passthru = { inherit server; };
+    passthru = {
+      inherit server;
+      tests = { inherit (nixosTests) rstudio-server; };
+    };
   } // lib.optionalAttrs (!server) {
     qtWrapperArgs = [
       "--suffix PATH : ${lib.makeBinPath [ gnumake ]}"

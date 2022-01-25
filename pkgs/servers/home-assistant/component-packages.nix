@@ -2,7 +2,7 @@
 # Do not edit!
 
 {
-  version = "2021.12.9";
+  version = "2021.12.10";
   components = {
     "abode" = ps: with ps; [ abodepy ];
     "accuweather" = ps: with ps; [ accuweather ];
@@ -135,7 +135,7 @@
     "cloud" = ps: with ps; [ pyturbojpeg aiohttp-cors hass-nabucasa ];
     "cloudflare" = ps: with ps; [ pycfdns ];
     "cmus" = ps: with ps; [ ]; # missing inputs: pycmus
-    "co2signal" = ps: with ps; [ ]; # missing inputs: co2signal
+    "co2signal" = ps: with ps; [ co2signal ];
     "coinbase" = ps: with ps; [ ]; # missing inputs: coinbase
     "color_extractor" = ps: with ps; [ colorthief ];
     "comed_hourly_pricing" = ps: with ps; [ ];
@@ -589,7 +589,7 @@
     "nuki" = ps: with ps; [ pynuki ];
     "numato" = ps: with ps; [ ]; # missing inputs: numato-gpio
     "number" = ps: with ps; [ ];
-    "nut" = ps: with ps; [ ]; # missing inputs: pynut2
+    "nut" = ps: with ps; [ pynut2 ];
     "nws" = ps: with ps; [ pynws ];
     "nx584" = ps: with ps; [ pynx584 ];
     "nzbget" = ps: with ps; [ ]; # missing inputs: pynzbgetapi
@@ -1090,6 +1090,7 @@
     "climate"
     "cloud"
     "cloudflare"
+    "co2signal"
     "color_extractor"
     "comfoconnect"
     "command_line"
@@ -1348,6 +1349,7 @@
     "nsw_rural_fire_service_feed"
     "nuki"
     "number"
+    "nut"
     "nws"
     "nx584"
     "octoprint"

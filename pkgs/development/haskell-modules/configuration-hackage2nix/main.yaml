@@ -133,6 +133,9 @@ default-package-overrides:
   # Pinning patch because it is mainly used by the reflex-frp ecosystem which is not yet compatible with it.
   # https://github.com/reflex-frp/reflex-dom/issues/431
   - patch < 0.0.5.0
+  # On the recommendation of hnix author:
+  # https://github.com/NixOS/nixpkgs/pull/154461#issuecomment-1015511883
+  - hnix < 0.15
 
 extra-packages:
   - base16-bytestring < 1               # required for cabal-install etc.
@@ -158,8 +161,6 @@ extra-packages:
   - resolv == 0.1.1.2                   # required to build cabal-install-3.0.0.0 with pre ghc-8.8.x
   - sbv == 7.13                         # required for pkgs.petrinizer
   - crackNum < 3.0                      # 2021-05-21: 3.0 removed the lib which sbv 7.13 uses
-  - ShellCheck == 0.7.1                 # 2021-05-09: haskell-ci 0.12.1 pins this version
-  - cabal-install-parsers == 0.4.2      # 2021-09-04: needed haskell-ci by until it upgrades to Cabal >= 3.6
   - ghc-api-compat == 8.6               # 2021-09-07: preserve for GHC 8.8.4
   - ghc-lib == 9.0.*                    # 2021-11-05: Need one GHC 9.0.2 compatible version
   - ghc-lib-parser == 9.0.*             # 2021-11-05: Need one GHC 9.0.2 compatible version
@@ -401,6 +402,8 @@ package-maintainers:
     - haskell-ci
     - diagrams
     - rel8
+    - regex-rure
+    - jacinda
     # owothia
     - irc-client
     - chatter
@@ -448,6 +451,7 @@ unsupported-platforms:
   FTGL:                                         [ x86_64-darwin, aarch64-darwin ]
   fuzzytime:                                    [ x86_64-darwin, aarch64-darwin ] # https://github.com/kamwitsta/fuzzytime/issues/2
   ghcjs-dom-hello:                              [ x86_64-darwin, aarch64-darwin ]
+  gi-adwaita:                                   [ x86_64-darwin, aarch64-darwin ]
   gi-dbusmenugtk3:                              [ x86_64-darwin, aarch64-darwin ]
   gi-dbusmenu:                                  [ x86_64-darwin, aarch64-darwin ]
   gi-ggit:                                      [ x86_64-darwin, aarch64-darwin ]
@@ -623,3 +627,6 @@ dont-distribute-packages:
   - webkitgtk3
   - webkitgtk3-javascriptcore
   - websnap
+
+  # glade relies on system libglade which is deprecated
+  - glade

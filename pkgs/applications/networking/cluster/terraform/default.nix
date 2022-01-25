@@ -1,5 +1,6 @@
 { stdenv
 , lib
+, buildEnv
 , buildGoModule
 , fetchFromGitHub
 , makeWrapper
@@ -62,9 +63,9 @@ let
           babariviere
           kalbasit
           marsam
+          maxeaubrey
           timstott
           zimbatm
-          maxeaubrey
           zowoq
         ];
       };
@@ -75,39 +76,6 @@ let
       withPlugins = plugins:
         let
           actualPlugins = plugins terraform.plugins;
-
-          # Make providers available in Terraform 0.13 and 0.12 search paths.
-          pluginDir = lib.concatMapStrings
-            (pl:
-              let
-                inherit (pl) version GOOS GOARCH;
-
-                pname = pl.pname or (throw "${pl.name} is missing a pname attribute");
-
-                # This is just the name, without the terraform-provider- prefix
-                plugin_name = lib.removePrefix "terraform-provider-" pname;
-
-                slug = pl.passthru.provider-source-address or "registry.terraform.io/nixpkgs/${plugin_name}";
-
-                shim = writeText "shim" ''
-                  #!${runtimeShell}
-                  exec ${pl}/bin/${pname}_v${version} "$@"
-                '';
-              in
-              ''
-                TF_0_13_PROVIDER_PATH=$out/plugins/${slug}/${version}/${GOOS}_${GOARCH}/${pname}_v${version}
-                mkdir -p "$(dirname $TF_0_13_PROVIDER_PATH)"
-
-                cp ${shim} "$TF_0_13_PROVIDER_PATH"
-                chmod +x "$TF_0_13_PROVIDER_PATH"
-
-                TF_0_12_PROVIDER_PATH=$out/plugins/${pname}_v${version}
-
-                cp ${shim} "$TF_0_12_PROVIDER_PATH"
-                chmod +x "$TF_0_12_PROVIDER_PATH"
-              ''
-            )
-            actualPlugins;
 
           # Wrap PATH of plugins propagatedBuildInputs, plugins may have runtime dependencies on external binaries
           wrapperInputs = lib.unique (lib.flatten
@@ -134,18 +102,16 @@ let
           terraform.overrideAttrs
             (orig: { passthru = orig.passthru // passthru; })
         else
-          lib.appendToName "with-plugins" (stdenv.mkDerivation {
+          lib.appendToName "with-plugins" (buildEnv {
             inherit (terraform) name meta;
+            paths = actualPlugins;
             nativeBuildInputs = [ makeWrapper ];
-
-            buildCommand = pluginDir + ''
-              mkdir -p $out/bin/
+            postBuild = ''
+              mkdir -p $out/bin
               makeWrapper "${terraform}/bin/terraform" "$out/bin/terraform" \
-                --set NIX_TERRAFORM_PLUGIN_DIR $out/plugins \
+                --set NIX_TERRAFORM_PLUGIN_DIR $out/libexec/terraform-providers \
                 --prefix PATH : "${lib.makeBinPath wrapperInputs}"
             '';
-
-            inherit passthru;
           });
     in
     withPlugins (_: [ ]);
@@ -159,20 +125,6 @@ in
 rec {
   # Constructor for other terraform versions
   mkTerraform = attrs: pluggable (generic attrs);
-
-  terraform_0_12 = mkTerraform {
-    version = "0.12.31";
-    sha256 = "03p698xdbk5gj0f9v8v1fpd74zng3948dyy4f2hv7zgks9hid7fg";
-    patches = [
-      ./provider-path.patch
-      (fetchpatch {
-        name = "fix-mac-mojave-crashes.patch";
-        url = "https://github.com/hashicorp/terraform/commit/cd65b28da051174a13ac76e54b7bb95d3051255c.patch";
-        sha256 = "1k70kk4hli72x8gza6fy3vpckdm3sf881w61fmssrah3hgmfmbrs";
-      })
-    ];
-    passthru = { inherit plugins; };
-  };
 
   terraform_0_13 = mkTerraform {
     version = "0.13.7";
@@ -198,8 +150,8 @@ rec {
   };
 
   terraform_1 = mkTerraform {
-    version = "1.1.3";
-    sha256 = "sha256-dvAuzVmwnM2PQcILzw3xNacBwuRY7cZEU3nv4/DzOKE=";
+    version = "1.1.4";
+    sha256 = "sha256-PzBdo4zqWB9ma+uYFGmZtJNCXlRnAHxQmzWxZFPzHH0=";
     vendorSha256 = "sha256-Rk2hHtJfaS553MJIea6n51irMas3qcBrWAD+adzTi1Y=";
     patches = [ ./provider-path-0_15.patch ];
     passthru = { inherit plugins; };
