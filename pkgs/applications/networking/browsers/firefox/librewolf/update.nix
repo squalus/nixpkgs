@@ -2,11 +2,6 @@
 , versionSuffix ? "", versionKey ? "version", jq, nix-prefetch-git, moreutils
 , attrPath, common-updater-scripts }:
 
-# The logic here:
-# - we start from the librewolf-common repo and find the latest tag
-# - we derive the firefox version from that
-# - and then we grab the latest tag of the librewolf-settings repo
-
 # When updating, default.nix should be manually reviewed against the
 # changes in the upstream linux build scripts:
 # - https://gitlab.com/librewolf-community/browser/linux/-/tree/master/scripts
@@ -29,30 +24,32 @@ writeScript "update-${attrPath}" ''
   }
   set -euo pipefail
 
-  outJson=pkgs/applications/networking/browsers/firefox/librewolf/src.json
+  latestTag=$(curl https://gitlab.com/api/v4/projects/librewolf-community%2Fbrowser%2Fsource/repository/tags?per_page=1 | jq -r .[0].name)
+  echo "latestTag=$latestTag"
 
-  commonRepoUrl=https://gitlab.com/librewolf-community/browser/common.git/
-  settingsRepoUrl=https://gitlab.com/librewolf-community/settings.git/
+  srcJson=pkgs/applications/networking/browsers/firefox/librewolf/src.json
+  localRev=$(jq -r .source.rev < $srcJson)
+  echo "localRev=$localRev"
 
-  function updateLwRepo() {
-    name=$1
-    rev=$2
-    url=$3
-    hash=$(nix-prefetch-git $url --quiet --rev $rev | jq -r .sha256)
-    jq ".$name.rev = \"$rev\"" $outJson | sponge $outJson
-    jq ".$name.sha256 = \"$hash\"" $outJson | sponge $outJson
-  }
+  if [ "$localRev" == "$latestTag" ]; then
+    exit 0
+  fi
 
-  latestCommonTag=$(list-git-tags $commonRepoUrl | tail -n1)
-  latestSettingsTag=$(list-git-tags $settingsRepoUrl | egrep '^[0-9\.]+$' | tail -n1)
+  prefetchOut=$(mktemp)
+  repoUrl=https://gitlab.com/librewolf-community/browser/source.git/
+  nix-prefetch-git $repoUrl --quiet --rev $latestTag --fetch-submodules > $prefetchOut
+  srcDir=$(jq -r .path < $prefetchOut)
+  srcHash=$(jq -r .sha256 < $prefetchOut)
 
-  echo latestCommonTag=$latestCommonTag
-  echo latestSettingsTag=$latestSettingsTag
-
-  lwVersion=''${latestCommonTag:1}
-  ffVersion=''${lwVersion%-*}
-  echo lwVersion=$lwVersion
-  echo ffVersion=$ffVersion
+  ffVersion=$(<$srcDir/version)
+  lwRelease=$(<$srcDir/release)
+  lwVersion="$ffVersion-$lwRelease"
+  echo "lwVersion=$lwVersion"
+  echo "ffVersion=$ffVersion"
+  if [ "$lwVersion" != "$latestTag" ]; then
+    echo "error: Tag name does not match the computed LibreWolf version"
+    exit 1
+  fi
 
   HOME=$(mktemp -d)
   export GNUPGHOME=$(mktemp -d)
@@ -65,12 +62,11 @@ writeScript "update-${attrPath}" ''
   gpgv --keyring="$GNUPGHOME"/pubring.kbx "$HOME"/shasums.asc "$HOME"/shasums
 
   ffHash=$(grep '\.source\.tar\.xz$' "$HOME"/shasums | grep '^[^ ]*' -o)
-  echo ffHash=$ffHash
+  echo "ffHash=$ffHash"
 
-  updateLwRepo common $latestCommonTag $commonRepoUrl
-  updateLwRepo settings $latestSettingsTag $settingsRepoUrl
-
-  jq ".firefox.version = \"$ffVersion\"" $outJson | sponge $outJson
-  jq ".firefox.sha512 = \"$ffHash\"" $outJson | sponge $outJson
-  jq ".packageVersion = \"$lwVersion\"" $outJson | sponge $outJson
+  jq ".source.rev = \"$latestTag\"" $srcJson | sponge $srcJson
+  jq ".source.sha256 = \"$srcHash\"" $srcJson | sponge $srcJson
+  jq ".firefox.version = \"$ffVersion\"" $srcJson | sponge $srcJson
+  jq ".firefox.sha512 = \"$ffHash\"" $srcJson | sponge $srcJson
+  jq ".packageVersion = \"$lwVersion\"" $srcJson | sponge $srcJson
 ''
