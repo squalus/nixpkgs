@@ -5,12 +5,8 @@ in {
   source = fetchFromGitLab {
     owner = "librewolf-community";
     repo = "browser/source";
+    fetchSubmodules = true;
     inherit (src.source) rev sha256;
-  };
-  settings = fetchFromGitLab {
-    owner = "librewolf-community";
-    repo = "settings";
-    inherit (src.settings) rev sha256;
   };
   firefox = fetchurl {
     url =

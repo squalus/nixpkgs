@@ -1,12 +1,11 @@
 { callPackage, git }:
 let
   src = callPackage ./src.nix { };
-  prefPane = callPackage ./pref-pane.nix { };
 in rec {
 
-  inherit (src) packageVersion firefox source settings;
+  inherit (src) packageVersion firefox source;
 
-  patches = [ prefPane ./verify-telemetry-macros.patch ];
+  patches = [ ./verify-telemetry-macros.patch ];
 
   extraConfigureFlags = [
     "--with-app-name=librewolf"
@@ -33,12 +32,12 @@ in rec {
     sed -i '/MOZ_NORMANDY/ s/True/False/' browser/moz.configure
   '';
 
-  extraPrefsFiles = [ "${settings}/librewolf.cfg" ];
+  extraPrefsFiles = [ "${source}/submodules/settings/librewolf.cfg" ];
 
-  extraPoliciesFiles = [ "${settings}/distribution/policies.json" ];
+  extraPoliciesFiles = [ "${source}/submodules/settings/distribution/policies.json" ];
 
   extraPassthru = {
-    librewolf = { inherit src patches prefPane; };
+    librewolf = { inherit src patches; };
     inherit extraPrefsFiles extraPoliciesFiles patches;
   };
 }
