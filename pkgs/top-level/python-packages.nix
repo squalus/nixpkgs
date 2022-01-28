@@ -1994,6 +1994,8 @@ in {
 
   datadog = callPackage ../development/python-modules/datadog { };
 
+  datafusion = callPackage ../development/python-modules/datafusion { };
+
   datamodeldict = callPackage ../development/python-modules/datamodeldict { };
 
   dataset = callPackage ../development/python-modules/dataset { };
@@ -5039,6 +5041,8 @@ in {
 
   mizani = callPackage ../development/python-modules/mizani { };
 
+  mkdocs = callPackage ../development/python-modules/mkdocs { };
+
   mkl-service = callPackage ../development/python-modules/mkl-service { };
 
   ml-collections = callPackage ../development/python-modules/ml-collections { };
@@ -5400,6 +5404,8 @@ in {
   nixpkgs-pytools = callPackage ../development/python-modules/nixpkgs-pytools { };
 
   nix-prefetch-github = callPackage ../development/python-modules/nix-prefetch-github { };
+
+  nkdfu = callPackage ../development/python-modules/nkdfu { };
 
   nltk = callPackage ../development/python-modules/nltk { };
 
@@ -6626,6 +6632,8 @@ in {
 
   pycryptodome = callPackage ../development/python-modules/pycryptodome { };
 
+  pycryptodome-test-vectors = callPackage ../development/python-modules/pycryptodome-test-vectors { };
+
   pycryptodomex = callPackage ../development/python-modules/pycryptodomex { };
 
   pyct = callPackage ../development/python-modules/pyct { };
@@ -6822,6 +6830,8 @@ in {
   pygdbmi = callPackage ../development/python-modules/pygdbmi { };
 
   pygeoip = callPackage ../development/python-modules/pygeoip { };
+
+  pygeos = callPackage ../development/python-modules/pygeos { };
 
   pygetwindow = callPackage ../development/python-modules/pygetwindow { };
 
@@ -7911,7 +7921,7 @@ in {
   python-http-client = callPackage ../development/python-modules/python-http-client { };
 
   pythonix = callPackage ../development/python-modules/pythonix {
-    nix = pkgs.nix_2_3;
+    nix = pkgs.nixVersions.nix_2_3;
     meson = pkgs.meson.override { python3 = self.python; };
   };
 
@@ -8272,9 +8282,7 @@ in {
 
   pywizlight = callPackage ../development/python-modules/pywizlight { };
 
-  pywlroots = callPackage ../development/python-modules/pywlroots {
-    wlroots = pkgs.wlroots_0_14;
-  };
+  pywlroots = callPackage ../development/python-modules/pywlroots { };
 
   pyxattr = callPackage ../development/python-modules/pyxattr { };
 

@@ -284,6 +284,7 @@ mapAliases ({
   flutter-beta = throw "Non-stable versions of Flutter have been removed. You can use flutterPackages.mkFlutter to generate a package for other Flutter versions."; # added 2020-01-15
   flutter-dev = throw "Non-stable versions of Flutter have been removed. You can use flutterPackages.mkFlutter to generate a package for other Flutter versions."; # added 2020-01-15
   flvtool2 = throw "flvtool2 has been removed."; # added 2020-11-03
+  fme = throw "fme was removed, because it is old and uses Glade, a discontinued library."; # added 2022-01-26
   foldingathome = fahclient; # added 2020-09-03
   font-awesome-ttf = font-awesome; # 2018-02-25
   # 2019-10-31
@@ -412,6 +413,7 @@ mapAliases ({
   inotifyTools = inotify-tools;
   inter-ui = inter; # added 2021-03-27
   iproute = iproute2; # moved from top-level 2021-03-14
+  ipsecTools = throw "ipsecTools has benn removed, because it was no longer maintained upstream"; # added 2021-12-15
   i-score = throw "i-score has been removed: abandoned upstream."; # added 2020-11-21
   jack2Full = jack2; # moved from top-level 2021-03-14
   jamomacore = throw "jamomacore has been removed: abandoned upstream."; # added 2020-11-21
@@ -631,6 +633,7 @@ mapAliases ({
   module_init_tools = kmod; # added 2016-04-22
   mozart = mozart2-binary; # added 2019-09-23
   mozart-binary = mozart2-binary; # added 2019-09-23
+  mpc_cli = mpc-cli; # moved from top-level 2022-01-24
   mpd_clientlib = libmpdclient; # added 2021-02-11
   mpich2 = mpich;  # added 2018-08-06
   msf = metasploit; # added 2018-04-25
@@ -661,7 +664,13 @@ mapAliases ({
   nilfs_utils = nilfs-utils; # added 2018-04-25
   nix-direnv-flakes = nix-direnv;
   nix-review = nixpkgs-review; # added 2019-12-22
-  nixFlakes = nixStable; # added 2021-05-21
+  nixFlakes = nixVersions.stable; # added 2021-05-21
+  nixStable = nixVersions.stable; # added 2022-01-24
+  nixUnstable = nixVersions.unstable; # added 2022-01-26
+  nix_2_3 = nixVersions.nix_2_3;
+  nix_2_4 = nixVersions.nix_2_4;
+  nix_2_5 = nixVersions.nix_2_5;
+  nix_2_6 = nixVersions.nix_2_6;
   nmap_graphical = nmap-graphical;  # added 2017-01-19
   nmap-unfree = nmap; # added 2021-04-06
   nologin = shadow; # added 2018-04-25
@@ -1027,6 +1036,7 @@ mapAliases ({
   tftp_hpa = tftp-hpa; # added 2015-04-03
   timescale-prometheus = promscale; # added 2020-09-29
   timetable = throw "timetable has been removed, as the upstream project has been abandoned"; # added 2021-09-05
+  tomboy = throw "tomboy is not actively developed anymore and was removed."; # added 2022-01-27
   tomcat7 = throw "tomcat7 has been removed from nixpkgs as it has reached end of life."; # added 2021-06-16
   tomcat8 = throw "tomcat8 has been removed from nixpkgs as it has reached end of life."; # added 2021-06-16
   tomcat85 = throw "tomcat85 has been removed from nixpkgs as it has reached end of life."; # added 2020-03-11
