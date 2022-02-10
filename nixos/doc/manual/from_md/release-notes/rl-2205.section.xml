@@ -81,6 +81,12 @@
       </listitem>
       <listitem>
         <para>
+          <link xlink:href="https://github.com/linux-apfs/linux-apfs-rw">apfs</link>,
+          a kernel module for mounting the Apple File System (APFS).
+        </para>
+      </listitem>
+      <listitem>
+        <para>
           <link xlink:href="https://frrouting.org/">FRRouting</link>, a
           popular suite of Internet routing protocol daemons (BGP, BFD,
           OSPF, IS-IS, VVRP and others). Available as
@@ -164,9 +170,23 @@
       </listitem>
       <listitem>
         <para>
+          <link xlink:href="https://moosefs.com">moosefs</link>, fault
+          tolerant petabyte distributed file system. Available as
+          <link linkend="opt-services.moosefs">moosefs</link>.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
           <link xlink:href="https://github.com/ThomasLeister/prosody-filer">prosody-filer</link>,
           a server for handling XMPP HTTP Upload requests. Available at
           <link linkend="opt-services.prosody-filer.enable">services.prosody-filer</link>.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link xlink:href="https://github.com/audreyt/ethercalc">ethercalc</link>,
+          an online collaborative spreadsheet. Available as
+          <link xlink:href="options.html#opt-services.ethercalc.enable">services.ethercalc</link>.
         </para>
       </listitem>
       <listitem>
@@ -183,6 +203,15 @@
           a browser-based version of the RStudio IDE for the R
           programming language. Available as
           <link xlink:href="options.html#opt-services.rstudio-server.enable">services.rstudio-server</link>.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <link xlink:href="https://github.com/juanfont/headscale">headscale</link>,
+          an Open Source implementation of the
+          <link xlink:href="https://tailscale.io">Tailscale</link>
+          Control Server. Available as
+          <link xlink:href="options.html#opt-services.headscale.enable">services.headscale</link>
         </para>
       </listitem>
     </itemizedlist>
@@ -213,6 +242,19 @@
       </listitem>
       <listitem>
         <para>
+          <literal>pkgs.ghc.withPackages</literal> as well as
+          <literal>haskellPackages.ghcWithPackages</literal> etc. now
+          needs be overridden directly, as opposed to overriding the
+          result of calling it. Additionally, the
+          <literal>withLLVM</literal> parameter has been renamed to
+          <literal>useLLVM</literal>. So instead of
+          <literal>(ghc.withPackages (p: [])).override { withLLVM = true; }</literal>,
+          one needs to use
+          <literal>(ghc.withPackages.override { useLLVM = true; }) (p: [])</literal>.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
           <literal>pkgs.emacsPackages.orgPackages</literal> is removed
           because org elpa is deprecated. The packages in the top level
           of <literal>pkgs.emacsPackages</literal>, such as org and
@@ -226,6 +268,23 @@
         <para>
           <literal>services.kubernetes.addons.dashboard</literal> was
           removed due to it being an outdated version.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          The DHCP server (<literal>services.dhcpd4</literal>,
+          <literal>services.dhcpd6</literal>) has been hardened. The
+          service is now using the systemd’s
+          <literal>DynamicUser</literal> mechanism to run as an
+          unprivileged dynamically-allocated user with limited
+          capabilities. The dhcpd state files are now always stored in
+          <literal>/var/lib/dhcpd{4,6}</literal> and the
+          <literal>services.dhcpd4.stateDir</literal> and
+          <literal>service.dhcpd6.stateDir</literal> options have been
+          removed. If you were depending on root privileges or
+          set{uid,gid,cap} binaries in dhcpd shell hooks, you may give
+          dhcpd more capabilities with e.g.
+          <literal>systemd.services.dhcpd6.serviceConfig.AmbientCapabilities</literal>.
         </para>
       </listitem>
       <listitem>
@@ -269,6 +328,22 @@
           interpreter. Scripts have to be converted to Python 3 for use
           with <literal>writers.writePython3</literal> or
           <literal>writers.writePyPy2</literal> needs to be used.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <literal>buildGoModule</literal> was updated to use
+          <literal>go_1_17</literal>, third party derivations that
+          specify &gt;= go 1.17 in the main <literal>go.mod</literal>
+          will need to regenerate their <literal>vendorSha256</literal>
+          hash.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          The <literal>gnome-passwordsafe</literal> package updated to
+          <link xlink:href="https://gitlab.gnome.org/World/secrets/-/tags/6.0">version
+          6.x</link> and renamed to <literal>gnome-secrets</literal>.
         </para>
       </listitem>
       <listitem>
@@ -384,6 +459,11 @@
       </listitem>
       <listitem>
         <para>
+          <literal>tilp2</literal> was removed together with its module
+        </para>
+      </listitem>
+      <listitem>
+        <para>
           The options
           <literal>networking.interfaces.&lt;name&gt;.ipv4.routes</literal>
           and
@@ -426,6 +506,20 @@
           possible to use the providers from
           <link xlink:href="https://github.com/numtide/nixpkgs-terraform-providers-bin">nixpkgs-terraform-providers-bin</link>
           directly.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          The existing <literal>pkgs.opentelemetry-collector</literal>
+          has been moved to
+          <literal>pkgs.opentelemetry-collector-contrib</literal> to
+          match the actual source being the <quote>contrib</quote>
+          edition. <literal>pkgs.opentelemetry-collector</literal> is
+          now the actual core release of opentelemetry-collector. If you
+          use the community contributions you should change the package
+          you refer to. If you don’t need them update your commands from
+          <literal>otelcontribcol</literal> to
+          <literal>otelcorecol</literal> and enjoy a 7x smaller binary.
         </para>
       </listitem>
       <listitem>
@@ -513,6 +607,14 @@
           message less cluttered). This will not impact the behaviour of
           code using these functions as intended, namely as top-level
           wrapper for <literal>assert</literal> conditions.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          <literal>pkgs.vimPlugins.onedark-nvim</literal> now refers to
+          <link xlink:href="https://github.com/navarasu/onedark.nvim">navarasu/onedark.nvim</link>
+          (formerly refers to
+          <link xlink:href="https://github.com/olimorris/onedarkpro.nvim">olimorris/onedarkpro.nvim</link>).
         </para>
       </listitem>
     </itemizedlist>
@@ -730,6 +832,14 @@
           a
           <link xlink:href="https://github.com/NixOS/rfcs/blob/master/rfcs/0042-config-option.md">RFC
           0042</link> configuration.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          The default value for
+          <literal>programs.spacefm.settings.graphical_su</literal> got
+          unset. It previously pointed to <literal>gksu</literal> which
+          has been removed.
         </para>
       </listitem>
       <listitem>

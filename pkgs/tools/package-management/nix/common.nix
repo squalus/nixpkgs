@@ -9,6 +9,7 @@ assert (sha256 == null) -> (src != null);
 let
   atLeast24 = lib.versionAtLeast version "2.4pre";
   atLeast25 = lib.versionAtLeast version "2.5pre";
+  atLeast27 = lib.versionAtLeast version "2.7pre";
 in
 { stdenv
 , autoconf-archive
@@ -44,7 +45,7 @@ in
 , util-linuxMinimal
 , xz
 
-, enableDocumentation ? atLeast24 || stdenv.hostPlatform == stdenv.buildPlatform
+, enableDocumentation ? !atLeast24 || stdenv.hostPlatform == stdenv.buildPlatform
 , enableStatic ? stdenv.hostPlatform.isStatic
 , withAWS ? !enableStatic && (stdenv.isLinux || stdenv.isDarwin), aws-sdk-cpp
 , withLibseccomp ? lib.meta.availableOn stdenv.hostPlatform libseccomp, libseccomp
@@ -100,6 +101,8 @@ stdenv.mkDerivation {
     lowdown
   ] ++ lib.optionals (atLeast24 && stdenv.isx86_64) [
     libcpuid
+  ] ++ lib.optional (atLeast27) [
+    nlohmann_json
   ] ++ lib.optionals withLibseccomp [
     libseccomp
   ] ++ lib.optionals withAWS [
@@ -165,7 +168,8 @@ stdenv.mkDerivation {
 
   makeFlags = [
     "profiledir=$(out)/etc/profile.d"
-  ] ++ lib.optional (stdenv.hostPlatform != stdenv.buildPlatform) "PRECOMPILE_HEADERS=0";
+  ] ++ lib.optional (stdenv.hostPlatform != stdenv.buildPlatform) "PRECOMPILE_HEADERS=0"
+    ++ lib.optional (stdenv.hostPlatform.isDarwin) "PRECOMPILE_HEADERS=1";
 
   installFlags = [ "sysconfdir=$(out)/etc" ];
 
