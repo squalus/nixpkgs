@@ -12,6 +12,7 @@
 , ninja
 , isPy3k
 , gnome
+, python
 }:
 
 buildPythonPackage rec {
@@ -46,6 +47,11 @@ buildPythonPackage rec {
   propagatedBuildInputs = [
     pycairo
     cairo
+  ];
+
+  mesonFlags = lib.optionals (stdenv.hostPlatform != stdenv.buildPlatform) [
+    "-Dpython=${python.pythonForBuild.interpreter}"
+    "-Dtests=false"
   ];
 
   passthru = {
